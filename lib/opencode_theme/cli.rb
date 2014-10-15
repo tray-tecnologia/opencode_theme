@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'thor'
 require 'yaml'
 YAML::ENGINE.yamler = 'syck' if defined? Syck
@@ -25,7 +26,7 @@ module OpencodeTheme
     tasks.keys.abbrev.each do |shortcut, command|
       map shortcut => command.to_sym
     end
-    
+
     desc "configure API_KEY PASSWORD THEME_ID", "Configura o tema que será modificado"
     def configure(api_key=nil, password=nil, theme_id=nil)
       config = {:api_key => api_key, :password => password, :theme_id => theme_id}
@@ -45,9 +46,9 @@ module OpencodeTheme
     method_option :master, :type => :boolean, :default => false
     def bootstrap(api_key=nil, password=nil, theme_name='default', theme_base='default')
       OpencodeTheme.config = {:api_key => api_key, :password => password}
-      
+
       check_config = OpencodeTheme.check_config
-      
+
       if check_config[:success]
         say("Configuration [OK]", :green)
       else
@@ -126,7 +127,7 @@ module OpencodeTheme
         filename = filename.gsub("#{Dir.pwd}/", '')
         unless local_assets_list.include?(filename)
           say("Unknown file [#{filename}]", :red)
-          next 
+          next
         end
         action = if [:changed, :new].include?(event)
           :send_asset
@@ -149,7 +150,7 @@ module OpencodeTheme
         say("Publishing Theme [FAIL]", :red)
       end
     end
-    
+
 
     desc "systeminfo", "Mostra informações do sistema"
     def systeminfo
@@ -186,15 +187,15 @@ private
     end
 
 
-    def send_asset(asset, quiet=false)
+    def send_asset(asset, quiet = false)
       return unless valid?(asset)
-      data = {:key => "/#{asset}"}
+      data = { key: "/#{asset}" }
       content = File.read("#{asset}")
       if binary_file?(asset) || OpencodeTheme.is_binary_data?(content)
         content = File.open("#{asset}", "rb") { |io| io.read }
-        data.merge!(:attachment => Base64.encode64(content))
+        data.merge!(attachment: Base64.encode64(content))
       else
-        data.merge!(:value => content)
+        data.merge!(value: Base64.encode64(content))
       end
       response = show_during("[#{timestamp}] Uploading: #{asset}", quiet) do
         OpencodeTheme.send_asset(data)
@@ -217,7 +218,7 @@ private
         report_error(Time.now, "Could not remove #{key}", response)
       end
     end
-    
+
     def watcher
       FileWatcher.new(Dir.pwd).watch() do |filename, event|
         yield("#{filename}", event)
@@ -256,7 +257,7 @@ private
       unless asset['key']
         report_error(Time.now, "Could not download #{key}", asset)
         return
-      end 
+      end
       if asset['content']
         content = asset['content'].gsub("\r", "")
         format = "w"
