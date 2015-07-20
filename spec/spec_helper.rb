@@ -14,3 +14,14 @@ def capture(stream)
 
   result
 end
+
+require 'logger'
+require 'http_logger'
+
+File.truncate('http.log', 0) if File.exists? 'http.log'
+HttpLogger.logger = Logger.new 'http.log'
+HttpLogger.colorize = false
+HttpLogger.log_headers = true
+HttpLogger.log_request_body  = true
+HttpLogger.log_response_body = true
+HttpLogger.level = :info
