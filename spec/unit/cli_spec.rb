@@ -1,37 +1,24 @@
 require_relative '../spec_helper'
-require 'opencode_theme'
-require 'opencode_theme/cli'
+require_relative 'cli_double'
 
-module OpencodeTheme
-  describe "Cli" do
-
-    class CliDouble < Cli
-      attr_writer :local_files, :mock_config
-
-      desc "",""
-      def config
-        @mock_config || super
-      end
-
-      desc "",""
-      def opencode_theme_url
-        super
-      end
-
-      desc "",""
-      def binary_file?(file)
-        super
-      end
-
-      desc "", ""
-      def local_files
-        @local_files
-      end
-    end
-
-    before do
-      @cli = CliDouble.new
-      OpencodeTheme.config = {}
+describe 'Cli' do
+  
+  before do
+    @cli = OpencodeTheme::CliDouble.new
+    OpencodeTheme.config = {}
+  end
+    
+  it 'should report binary files as binary' do
+    extensions = %w(png gif jpg jpeg eot ttf woff otf swf ico pdf)
+    extensions.each do |ext|
+      expect(@cli.binary_file? "hello.#{ext}").to eq(true), ext
     end
   end
+
+  it 'should not report text based files as binary' do
+    expect(@cli.binary_file? 'style.css').to eq false
+    expect(@cli.binary_file? 'application.js').to eq false
+    expect(@cli.binary_file? 'settings_data.json').to eq false
+  end
+  
 end
