@@ -9,7 +9,6 @@ describe OpencodeTheme::Cli, :functional do
   
   after(:all) do
     # clearing generated and downloaded files
-    FileUtils.cd '..'
     FileUtils.rm 'config.yml'
     FileUtils.rm_rf 'default'
   end
@@ -19,6 +18,12 @@ describe OpencodeTheme::Cli, :functional do
       pending 'redmine issue 37588'
       output = capture(:stdout) { subject.list }
       expect(output).to include '[FAIL]'
+    end
+    
+    it 'does not clean cache when the config is invalid' do
+      pending 'redmine issue 37628'
+      output = capture(:stdout) { subject.clean }
+      expect(output).to include 'Clean cache [FAIL]'
     end
   end
   
@@ -37,12 +42,9 @@ describe OpencodeTheme::Cli, :functional do
   end
   
   context 'Bootstrap' do
-    after(:context) do
-      Dir.chdir '..'
-    end
-    
     it 'create new theme' do
       output = capture(:stdout) { subject.bootstrap API_KEY, PASSWORD }
+      FileUtils.cd '..'
       expect(output).to include 'Configuration [OK]'
       expect(output).to include 'Create default theme on store'
       expect(output).to include 'Saving configuration to default'
@@ -52,8 +54,6 @@ describe OpencodeTheme::Cli, :functional do
   end
   
   context 'List' do
-    let(:output) { capture(:stdout) { subject.list } }
-    
     it 'lists all the themes from the store' do
       output = capture(:stdout) { subject.list }
       expect(output).to include 'Theme name:'
@@ -65,11 +65,20 @@ describe OpencodeTheme::Cli, :functional do
   context 'Publishing Theme' do
     it 'publishes theme' do
       pending 'redmine issue 36815'
-      Dir.chdir 'default'
+      FileUtils.cd 'default'
       output = capture(:stdout) { subject.publish }
+      FileUtils.cd '..'
       expect(output).not_to include '[FAIL]'
       expect(output).to include '[SUCCESS]'
-      Dir.chdir '..'
+    end
+  end
+  
+  context 'Cleaning cache' do
+    it 'cleans the cache' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.clean }
+      FileUtils.cd '..'
+      expect(output).to include 'Clean cache [OK]'
     end
   end
   
