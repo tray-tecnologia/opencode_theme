@@ -25,6 +25,12 @@ describe OpencodeTheme::Cli, :functional do
       output = capture(:stdout) { subject.clean }
       expect(output).to include 'Clean cache [FAIL]'
     end
+    
+    it 'does not upload any file when the config is invalid' do
+      output = capture(:stdout) { subject.upload }
+      require'pry';binding.pry
+      expect(output).to include '[FAIL]'
+    end
   end
   
   context 'Configure' do
@@ -82,12 +88,51 @@ describe OpencodeTheme::Cli, :functional do
     end
   end
   
+  context 'Upload' do
+    it 'uploads all files' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.upload }
+      FileUtils.cd '..'
+      expect(output).to include 'Uploaded'
+      expect(output).not_to include 'Error'
+      expect(output).to include 'Done.'
+    end
+    
+    it 'uploads a single file' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.upload 'img/tray.png' }
+      FileUtils.cd '..'
+      expect(output).to include 'Uploaded: img/tray.png'
+      expect(output).to include 'Done.'
+      expect(output).not_to include 'Error'
+    end
+  end
+  
   context 'System Information' do
     let(:output) { capture(:stdout) { subject.systeminfo } }
     
     it 'displays system information' do
       pending 'redmine issue 37576'
       expect(output).not_to be_nil
+    end
+  end
+  
+  context 'Help' do
+    let(:output) { capture(:stdout) { subject.help } }
+    
+    it 'displays help about each command' do
+      expect(output).to include 'Commands:'
+      expect(output).to include 'bootstrap API_KEY PASSWORD THEME_NAME THEME_BASE'
+      expect(output).to include 'clean'
+      expect(output).to include 'configure API_KEY PASSWORD THEME_ID'
+      expect(output).to include 'download FILE'
+      expect(output).to include 'help [COMMAND]'
+      expect(output).to include 'list'
+      expect(output).to include 'open'
+      expect(output).to include 'remove FILE'
+      expect(output).to include 'systeminfo'
+      expect(output).to include 'upload FILE'
+      expect(output).to include 'watch'
     end
   end
     
