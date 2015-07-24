@@ -28,7 +28,6 @@ describe OpencodeTheme::Cli, :functional do
     
     it 'does not upload any file when the config is invalid' do
       output = capture(:stdout) { subject.upload }
-      require'pry';binding.pry
       expect(output).to include '[FAIL]'
     end
   end
@@ -85,6 +84,26 @@ describe OpencodeTheme::Cli, :functional do
       output = capture(:stdout) { subject.clean }
       FileUtils.cd '..'
       expect(output).to include 'Clean cache [OK]'
+    end
+  end
+  
+  context 'Download' do
+    it 'downloads all files' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.download }
+      FileUtils.cd '..'
+      expect(output).to include 'Downloaded'
+      expect(output).not_to include 'Error'
+      expect(output).to include 'Done.'
+    end
+    
+    it 'downloads a single file' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.download 'img/tray.png' }
+      FileUtils.cd '..'
+      expect(output).to include 'Downloaded: img/tray.png'
+      expect(output).to include 'Done.'
+      expect(output).not_to include 'Error'
     end
   end
   
