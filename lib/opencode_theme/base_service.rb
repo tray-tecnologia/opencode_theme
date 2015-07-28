@@ -1,5 +1,4 @@
 require 'httparty'
-
 module OpencodeTheme
   include HTTParty
   default_options.update(verify: false)
@@ -15,7 +14,7 @@ module OpencodeTheme
     response = opencode_theme.post("/api/check", :query => {:theme_id => config[:theme_id] })
     return {success: response.success?, response: JSON.parse(response.body)}
   end
-  
+
   def self.list
     response = opencode_theme.get("/api/list")
     return {success: response.success?, response: JSON.parse(response.body)}
@@ -24,12 +23,7 @@ module OpencodeTheme
  def self.clean
    response = opencode_theme.post("/api/clean_cache", :query => {:theme_id => config[:theme_id] })
    return {success: response.success?, response: JSON.parse(response.body)}
- end  
-
-  def self.publish(theme_id)
-    response = opencode_theme.post("/api/themes/publish", :body => {:theme_id => theme_id} , :parser => NOOPParser)
-    return {success: response.success?, response: JSON.parse(response.body)}
-  end
+ end
 
   def self.theme_delete(theme_id)
     response = opencode_theme.delete("/api/themes/#{theme_id}", :parser => NOOPParser)
