@@ -28,7 +28,8 @@ describe OpencodeTheme::Cli, :functional do
     
     it 'does not upload any file when the config is invalid' do
       output = capture(:stdout) { subject.upload }
-      expect(output).to include '[FAIL]'
+      expect(output).not_to include 'Uploaded'
+      expect(output).to include 'Done.'
     end
   end
   
@@ -64,17 +65,6 @@ describe OpencodeTheme::Cli, :functional do
       expect(output).to include 'Theme name:'
       expect(output).to include 'Theme ID:'
       expect(output).to include 'Theme status:'
-    end
-  end
-    
-  context 'Publishing Theme' do
-    it 'publishes theme' do
-      pending 'redmine issue 36815'
-      FileUtils.cd 'default'
-      output = capture(:stdout) { subject.publish }
-      FileUtils.cd '..'
-      expect(output).not_to include '[FAIL]'
-      expect(output).to include '[SUCCESS]'
     end
   end
   
