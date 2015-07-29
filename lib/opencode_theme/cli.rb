@@ -56,17 +56,17 @@ module OpencodeTheme
           say("#{(theme['published'])}\n\n", color)
         end
       else
-        report_error(Time.now, "Could not list now")
+        report_error(Time.now, "Could not list now", response[:response])
       end
     end
-  
+
     desc "clean", "Limpa o cache de arquivos estáticos"
     def clean
       config = OpencodeTheme.config
       response = OpencodeTheme.clean
         if response[:success]
           say("Clean cache [OK]\n",  :green)
-        else   
+        else
           say("Clean cache [FAIL]",  :red)
         end
       end
@@ -123,7 +123,7 @@ module OpencodeTheme
       end
 
       assets.each do |asset|
-      asset = URI.decode(asset)       
+      asset = URI.decode(asset)
         download_asset(asset)
         say("#{OpencodeTheme.api_usage} Downloaded: #{asset}", :green) unless options['quiet']
       end
@@ -169,17 +169,6 @@ module OpencodeTheme
         send(action, filename, options['quiet'])
       end
     end
-
-    desc "publish", "Publica um tema"
-    def publish
-      response = OpencodeTheme.publish(config[:theme_id])
-      if response[:success]
-        say("Publishing Theme [OK]", :green)
-      else
-        say("Publishing Theme [FAIL]", :red)
-      end
-    end
-
 
     desc "systeminfo", "Mostra informacoes do sistema"
     def systeminfo
@@ -288,7 +277,7 @@ private
       else
          report_error(Time.now, "INVALID NAME #{name}", key)
       end
-      valid      
+      valid
     end
 
     def download_asset(key)
