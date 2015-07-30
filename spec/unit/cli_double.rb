@@ -37,11 +37,7 @@ module OpencodeTheme
     def watch
     
     end
-  
-    def publish
-      super
-    end
-  
+    
     def systeminfo
     
     end

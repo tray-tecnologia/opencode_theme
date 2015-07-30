@@ -9,7 +9,6 @@ describe OpencodeTheme::Cli, :functional do
   
   after(:all) do
     # clearing generated and downloaded files
-    FileUtils.cd '..'
     FileUtils.rm 'config.yml'
     FileUtils.rm_rf 'default'
   end
@@ -19,6 +18,18 @@ describe OpencodeTheme::Cli, :functional do
       pending 'redmine issue 37588'
       output = capture(:stdout) { subject.list }
       expect(output).to include '[FAIL]'
+    end
+    
+    it 'does not clean cache when the config is invalid' do
+      pending 'redmine issue 37628'
+      output = capture(:stdout) { subject.clean }
+      expect(output).to include 'Clean cache [FAIL]'
+    end
+    
+    it 'does not upload any file when the config is invalid' do
+      output = capture(:stdout) { subject.upload }
+      expect(output).not_to include 'Uploaded'
+      expect(output).to include 'Done.'
     end
   end
   
@@ -37,12 +48,9 @@ describe OpencodeTheme::Cli, :functional do
   end
   
   context 'Bootstrap' do
-    after(:context) do
-      Dir.chdir '..'
-    end
-    
     it 'create new theme' do
       output = capture(:stdout) { subject.bootstrap API_KEY, PASSWORD }
+      FileUtils.cd '..'
       expect(output).to include 'Configuration [OK]'
       expect(output).to include 'Create default theme on store'
       expect(output).to include 'Saving configuration to default'
@@ -52,8 +60,6 @@ describe OpencodeTheme::Cli, :functional do
   end
   
   context 'List' do
-    let(:output) { capture(:stdout) { subject.list } }
-    
     it 'lists all the themes from the store' do
       output = capture(:stdout) { subject.list }
       expect(output).to include 'Theme name:'
@@ -61,15 +67,53 @@ describe OpencodeTheme::Cli, :functional do
       expect(output).to include 'Theme status:'
     end
   end
+  
+  context 'Cleaning cache' do
+    it 'cleans the cache' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.clean }
+      FileUtils.cd '..'
+      expect(output).to include 'Clean cache [OK]'
+    end
+  end
+  
+  context 'Download' do
+    it 'downloads all files' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.download }
+      FileUtils.cd '..'
+      expect(output).to include 'Downloaded'
+      expect(output).not_to include 'Error'
+      expect(output).to include 'Done.'
+    end
     
-  context 'Publishing Theme' do
-    it 'publishes theme' do
-      pending 'redmine issue 36815'
-      Dir.chdir 'default'
-      output = capture(:stdout) { subject.publish }
-      expect(output).not_to include '[FAIL]'
-      expect(output).to include '[SUCCESS]'
-      Dir.chdir '..'
+    it 'downloads a single file' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.download 'img/tray.png' }
+      FileUtils.cd '..'
+      expect(output).to include 'Downloaded: img/tray.png'
+      expect(output).to include 'Done.'
+      expect(output).not_to include 'Error'
+    end
+  end
+  
+  context 'Upload' do
+    it 'uploads all files' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.upload }
+      FileUtils.cd '..'
+      expect(output).to include 'Uploaded'
+      expect(output).not_to include 'Error'
+      expect(output).to include 'Done.'
+    end
+    
+    it 'uploads a single file' do
+      FileUtils.cd 'default'
+      output = capture(:stdout) { subject.upload 'img/tray.png' }
+      FileUtils.cd '..'
+      expect(output).to include 'Uploaded: img/tray.png'
+      expect(output).to include 'Done.'
+      expect(output).not_to include 'Error'
     end
   end
   
@@ -79,6 +123,25 @@ describe OpencodeTheme::Cli, :functional do
     it 'displays system information' do
       pending 'redmine issue 37576'
       expect(output).not_to be_nil
+    end
+  end
+  
+  context 'Help' do
+    let(:output) { capture(:stdout) { subject.help } }
+    
+    it 'displays help about each command' do
+      expect(output).to include 'Commands:'
+      expect(output).to include 'bootstrap API_KEY PASSWORD THEME_NAME THEME_BASE'
+      expect(output).to include 'clean'
+      expect(output).to include 'configure API_KEY PASSWORD THEME_ID'
+      expect(output).to include 'download FILE'
+      expect(output).to include 'help [COMMAND]'
+      expect(output).to include 'list'
+      expect(output).to include 'open'
+      expect(output).to include 'remove FILE'
+      expect(output).to include 'systeminfo'
+      expect(output).to include 'upload FILE'
+      expect(output).to include 'watch'
     end
   end
     
