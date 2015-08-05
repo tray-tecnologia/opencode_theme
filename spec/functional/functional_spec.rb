@@ -3,9 +3,9 @@ require_relative '../spec_helper'
 describe OpencodeTheme::Cli, :functional do
   
   STORE_ID = '430692'
+  FILE_NAME = 'layouts/default.html'
   API_KEY = '11451c354c1f95fe60f80d7672bf184a'
   PASSWORD = '14ae838d9e971465af45b35803b8f0a4'
-  THEME_ID = ''
   
   after(:all) do
     # clearing generated and downloaded files
@@ -15,14 +15,16 @@ describe OpencodeTheme::Cli, :functional do
   
   context 'Invalid or Inexistent Configuration' do
     it 'does not list when the config is invalid' do
-      pending 'redmine issue 37588'
       output = capture(:stdout) { subject.list }
-      expect(output).to include '[FAIL]'
+      expect(File.exists? 'config.yml').to eq false
+      expect(output).to include 'config.yml does not exist!'
+      expect(output).to include 'Error: Could not list now'
+      expect(output).to include 'Error Details: {"authentication"=>false}'
     end
     
     it 'does not clean cache when the config is invalid' do
-      pending 'redmine issue 37628'
       output = capture(:stdout) { subject.clean }
+      expect(File.exists? 'config.yml').to eq false
       expect(output).to include 'Clean cache [FAIL]'
     end
     
@@ -35,9 +37,9 @@ describe OpencodeTheme::Cli, :functional do
   
   context 'Configure' do
     it 'fails to create config.yml file when called with no arguments' do
-      pending 'redmine issue 37590'
       output = capture(:stdout) { subject.configure }
-      expect(output).to include '[FAIL]'
+      expect(output).to include 'Configuration [FAIL]'
+      expect(File.exists? 'config.yml').to eq false
     end
     
     it 'creates config.yml when called with parameters' do
@@ -55,6 +57,7 @@ describe OpencodeTheme::Cli, :functional do
       expect(output).to include 'Create default theme on store'
       expect(output).to include 'Saving configuration to default'
       expect(output).to include 'Downloading default assets from Opencode'
+      expect(output).to include "Downloaded: #{ FILE_NAME }"
       expect(output).to include 'Done.'
     end
   end
@@ -83,15 +86,16 @@ describe OpencodeTheme::Cli, :functional do
       output = capture(:stdout) { subject.download }
       FileUtils.cd '..'
       expect(output).to include 'Downloaded'
+      expect(output).to include "Downloaded: #{ FILE_NAME }"
       expect(output).not_to include 'Error'
       expect(output).to include 'Done.'
     end
     
     it 'downloads a single file' do
       FileUtils.cd 'default'
-      output = capture(:stdout) { subject.download 'img/tray.png' }
+      output = capture(:stdout) { subject.download FILE_NAME }
       FileUtils.cd '..'
-      expect(output).to include 'Downloaded: img/tray.png'
+      expect(output).to include "Downloaded: #{ FILE_NAME }"
       expect(output).to include 'Done.'
       expect(output).not_to include 'Error'
     end
@@ -103,15 +107,16 @@ describe OpencodeTheme::Cli, :functional do
       output = capture(:stdout) { subject.upload }
       FileUtils.cd '..'
       expect(output).to include 'Uploaded'
+      expect(output).to include "Uploaded: #{ FILE_NAME }"
       expect(output).not_to include 'Error'
       expect(output).to include 'Done.'
     end
     
     it 'uploads a single file' do
       FileUtils.cd 'default'
-      output = capture(:stdout) { subject.upload 'img/tray.png' }
+      output = capture(:stdout) { subject.upload FILE_NAME }
       FileUtils.cd '..'
-      expect(output).to include 'Uploaded: img/tray.png'
+      expect(output).to include "Uploaded: #{ FILE_NAME }"
       expect(output).to include 'Done.'
       expect(output).not_to include 'Error'
     end
