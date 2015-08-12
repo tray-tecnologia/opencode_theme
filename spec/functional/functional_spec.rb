@@ -42,8 +42,20 @@ describe OpencodeTheme::Cli, :functional do
       expect(File.exists? 'config.yml').to eq false
     end
     
-    it 'creates config.yml when called with parameters' do
-      output = capture(:stdout) { subject.configure API_KEY, PASSWORD }
+    it 'fails to create config.yml file when called with inexistent theme_id' do
+      output = capture(:stdout) { subject.configure API_KEY, PASSWORD, 2147483647 }
+      expect(output).to include 'Configuration [FAIL]'
+      expect(File.exists? 'config.yml').to eq false
+    end
+    
+    it 'fails to create config.yml file when called with invalid theme_id' do
+      output = capture(:stdout) { subject.configure API_KEY, PASSWORD, 'aaa' }
+      expect(output).to include 'Configuration [FAIL]'
+      expect(File.exists? 'config.yml').to eq false
+    end
+    
+    it 'creates config.yml when called with valid theme_id' do
+      output = capture(:stdout) { subject.configure API_KEY, PASSWORD, 1 }
       expect(output).to include 'Configuration [OK]'
       expect(File.exists? 'config.yml').to eq true
     end
@@ -68,6 +80,7 @@ describe OpencodeTheme::Cli, :functional do
       expect(output).to include 'Theme name:'
       expect(output).to include 'Theme ID:'
       expect(output).to include 'Theme status:'
+      expect(output).to include 'excluir'
     end
   end
   
