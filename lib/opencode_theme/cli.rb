@@ -11,6 +11,7 @@ require 'mimemagic'
 
 MimeMagic.add('application/json', extensions: %w(json js), parents: 'text/plain')
 MimeMagic.add('application/x-pointplus', extensions: %w(scss styl), parents: 'text/css')
+MimeMagic.add('application/font-woff2', extensions: %w(woff2), parents: 'font/opentype')
 MimeMagic.add('application/vnd.ms-fontobject', extensions: %w(eot), parents: 'font/opentype')
 
 module OpencodeTheme
@@ -329,7 +330,7 @@ module OpencodeTheme
     def valid_name?(key)
       return if temporary_file?(key)
       name = key.split('/').last
-      if name =~ /^[0-9a-zA-Z\-_.]+\.(ttf|eot|svg|woff|css|scss|styl|html|js|jpg|gif|png|json|TTF|EOT|SVG|WOFF|CSS|SCSS|STYL|HTML|JS|PNG|GIF|JPG|JSON)$/
+      if name =~ /^[0-9a-zA-Z\-_.]+\.(ttf|eot|svg|woff|woff2|css|scss|styl|html|js|jpg|gif|png|json|TTF|EOT|SVG|WOFF|WOFF2|CSS|SCSS|STYL|HTML|JS|PNG|GIF|JPG|JSON)$/
         valid =  true
       else
         response = {}
