@@ -10,7 +10,7 @@ describe OpencodeTheme::Cli, :functional do
   before(:all) do
     # clearing generated and downloaded files
     FileUtils.rm_rf 'config.yml' if File.exist?('config.yml')
-    FileUtils.rm_rf THEME_NAME if File.exist?('default')
+    FileUtils.rm_rf THEME_NAME if File.exist?(THEME_NAME)
   end
 
   after(:all) do
