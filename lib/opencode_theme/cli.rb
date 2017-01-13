@@ -149,7 +149,7 @@ module OpencodeTheme
             say('Done.', :green) unless options['quiet']
           end
         rescue
-          say("Error: #{asset}", :red)
+          say("Error: #{asset}", :red) unless options['quiet']
         end
       end
     end
