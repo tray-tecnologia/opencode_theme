@@ -142,12 +142,15 @@ module OpencodeTheme
       end
       assets.each do |asset|
         asset = URI.decode(asset)
-        download = download_asset(asset)
-        if download
-
-          say("#{OpencodeTheme.api_usage} Downloaded: #{asset}", :green) unless options['quiet'] || !download
-          say('Done.', :green) unless options['quiet']
-       end
+        begin
+          download = download_asset(asset)
+          if download
+            say("#{OpencodeTheme.api_usage} Downloaded: #{asset}", :green) unless options['quiet'] || !download
+            say('Done.', :green) unless options['quiet']
+          end
+        rescue
+          say("Error: #{asset}", :red) unless options['quiet']
+        end
       end
     end
 
