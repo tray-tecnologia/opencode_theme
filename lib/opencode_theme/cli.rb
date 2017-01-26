@@ -333,7 +333,7 @@ module OpencodeTheme
     def valid_name?(key)
       return if temporary_file?(key)
       name = key.split('/').last
-      if name =~ /^[0-9a-zA-Z\-_.]+\.(ttf|eot|svg|woff|woff2|css|scss|styl|html|js|jpg|gif|png|json|TTF|EOT|SVG|WOFF|WOFF2|CSS|SCSS|STYL|HTML|JS|PNG|GIF|JPG|JSON)$/
+      if name =~ /^[0-9a-zA-Z\-_.]+\.(ttf|otf|eot|svg|woff|woff2|css|scss|styl|html|js|jpg|gif|png|json|TTF|OTF|EOT|SVG|WOFF|WOFF2|CSS|SCSS|STYL|HTML|JS|PNG|GIF|JPG|JSON)$/
         valid =  true
       else
         response = {}
