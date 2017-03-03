@@ -124,7 +124,7 @@ module OpencodeTheme
 
     desc 'open', 'Abre a loja no navegador'
     def open(*keys)
-      if Launchy.open opencode_theme_url
+      if Launchy.open "#{opencode_theme_url}&#{rand(10000)}"
         say('Done.', :green)
       end
     end
