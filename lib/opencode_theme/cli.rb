@@ -253,7 +253,8 @@ module OpencodeTheme
     end
 
     def opencode_theme_url
-      config[:preview_url]
+      hash_no_cache = rand(10000)
+      config[:preview_url].concat("&#{hash_no_cache}")
     end
 
     def send_asset(asset, quiet = false)
