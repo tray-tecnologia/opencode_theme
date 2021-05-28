@@ -17,9 +17,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency('thor', '>= 0.14.4')
   spec.add_dependency('httparty', '~> 0.14.0')
-  spec.add_dependency('mimemagic')
-  spec.add_dependency('filewatcher')
-  spec.add_dependency('launchy')
+  spec.add_dependency('mimemagic', '~> 0.4.3')
+  spec.add_dependency('filewatcher', '= 0.5.4')
+  spec.add_dependency('launchy', '~> 2.5.0')
 
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
