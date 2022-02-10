@@ -1,4 +1,9 @@
-# Opencode Theme
+# This tool is deprecated. Use the new [Tray CLI](https://github.com/tray-tecnologia/tray-cli).
+This tool has been replaced by the Tray CLI, a more modern tool that will help you make incredible themes for Tray.
+
+---
+
+## Opencode Theme
 [![RubyGems][gem_version_badge]][ruby_gems]
 [![RubyGems][gem_downloads_badge]][ruby_gems]
 
